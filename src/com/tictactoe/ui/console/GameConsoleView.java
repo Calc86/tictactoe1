@@ -10,6 +10,10 @@ import com.tictactoe.view.MessageGetter;
 import com.tictactoe.view.MessageShower;
 import com.tictactoe.view.IGameInput;
 import com.tictactoe.view.IGameView;
+import com.util.Environment;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 public class GameConsoleView implements IGameView {
     TicTacToeField field;
@@ -23,11 +27,33 @@ public class GameConsoleView implements IGameView {
         ms = new ConsoleMessageShower();
         game = Game.getInstance();
         model = GameModel.getInstance();
+
+        setEncoding();
+    }
+
+    private void setEncoding(){
+        String encoding = "cp1251";
+
+        if(Environment.isWin()) encoding = "Cp866";
+        else if (Environment.isMac()) encoding = "utf8";
+        else if (Environment.isUnix()) encoding = "utf8";
+
+        message(Environment.getOsName() + " " + Environment.getOsVersion());
+        try{
+            System.setOut(new PrintStream(System.out, true, encoding));
+        }catch (UnsupportedEncodingException e){
+            message("cant set encoding for our");
+        }
+        try{
+            System.setErr(new PrintStream(System.out, true, encoding));
+        }catch (UnsupportedEncodingException e){
+            message("cant set encoding for err");
+        }
     }
 
     @Override
     public void beforeTurn(Player player) {
-        message("player " + player.getName() + " turn");
+        message("Ход игрока " + player.getName() + "(" + player.getSign() + ")");
     }
 
     @Override
