@@ -139,15 +139,12 @@ public class GameConsoleView implements IGameView {
         message(" X=[1][2][3]");
         for (int i = 0; i < field.size; i++) {
             print("[" + (i + 1) + "]");
-            //System.out.print("[" + (i + 1) + "]");
             showLine(i);
             message("");
-            //System.out.println();
         }
     }
 
     private void showCell(int x, int y){
-        //System.out.print("[" + field[x][y] + "]");
         print("[" + field.getField()[x][y] + "]");
     }
 
