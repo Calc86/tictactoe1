@@ -3,14 +3,13 @@ package com.tictactoe.model;
 import com.tictactoe.Game;
 
 public class GameModel {
-    private static GameModel instance;
+    private static GameModel instance = new GameModel();
 
     private Player[] players;
     private History history;
     private TicTacToeField field;
 
     public static GameModel getInstance() {
-        if(instance == null) instance = new GameModel();
         return instance;
     }
 

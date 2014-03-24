@@ -7,7 +7,7 @@ import com.tictactoe.view.IGameInput;
 import com.tictactoe.view.IGameView;
 
 public class Game {
-    private static Game instance;
+    private static Game instance = new Game();
 
     public static final int PLAYERS_COUNT = 2;
     public static final int MAX_TURNS = 9;
@@ -22,7 +22,6 @@ public class Game {
     private char playerSign[] = {'X','O'};
 
     public static Game getInstance() {
-        if(instance == null) instance = new Game();
         return instance;
     }
 
