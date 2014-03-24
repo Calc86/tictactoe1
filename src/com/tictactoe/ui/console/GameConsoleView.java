@@ -88,6 +88,7 @@ public class GameConsoleView implements IGameView {
         for (int i = 0; i < history.getCount(); i++) {
             field.setField(all[i]);
             showField();
+            message("");
         }
     }
 
