@@ -3,7 +3,7 @@ package com.tictactoe.model;
 import com.tictactoe.Game;
 
 public class GameModel {
-    private static GameModel instance = new GameModel();
+    volatile private static GameModel instance = new GameModel();
 
     private Player[] players;
     private History history;
