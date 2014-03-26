@@ -1,5 +1,6 @@
 package com.tictactoe.model;
 
+import com.tictactoe.ai.RandomAI;
 import com.tictactoe.view.IGameInput;
 
 public class Player {
@@ -61,23 +62,7 @@ public class Player {
     }
 
     private IGameInput aiInput(){
-        return new IGameInput() {
-            @Override
-            public int getX() {
-                return (int)(Math.random() * 3 + 1);
-            }
-
-            @Override
-            public int getY() {
-                return (int)(Math.random() * 3 + 1);
-            }
-
-            @Override
-            public String getPlayerName(Player player) {
-                Integer ai = (int)(Math.random() * 100);
-                return "Ai-" + ai.toString();
-            }
-        };
+        return new RandomAI();
     }
 
     @Override
