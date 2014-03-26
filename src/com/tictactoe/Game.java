@@ -27,6 +27,8 @@ public class Game {
         return instance;
     }
 
+    private int lastX, lastY;
+
     private Game(){
         model = GameModel.getInstance();
     }
@@ -107,14 +109,22 @@ public class Game {
         return currentPlayer;
     }
 
+    public int getLastX() {
+        return lastX;
+    }
+
+    public int getLastY() {
+        return lastY;
+    }
+
     private void getTurn(){
         view.beforeTurn();
-        int x = getCellX();
-        int y = getCellY();
+        lastX = getCellX();
+        lastY = getCellY();
         view.onTurn();
 
-        x = x-1;
-        y = y-1;
+        int x = lastX-1;
+        int y = lastY-1;
 
         if(model.getField().isCellSet(x, y)){
             view.onError("Ячейка уже занята, попроубей еще раз");
