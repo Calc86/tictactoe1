@@ -8,7 +8,7 @@ import com.tictactoe.view.IGameInput;
  */
 public abstract class AI implements IGameInput{
     public String getName() {
-        return this.getClass().getName();
+        return this.getClass().getSimpleName();
     }
 
     @Override
