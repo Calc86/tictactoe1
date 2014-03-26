@@ -15,51 +15,76 @@ public class NativeAI extends AI {
     };
 
     enum ERow{
-        H1(0),H2(1),H3(2),V1(0),V2(1),V3(2),X1(0),X2(0);
+        H1(0,0),H2(1,1),H3(2,2),V1(0,3),V2(1,4),V3(2,5),X1(0,6),X2(0,7);
+
+        int[][] xs = {
+                {0,1,2},
+                {0,1,2},
+                {0,1,2},
+                {0,0,0},
+                {1,1,1},
+                {2,2,2},
+                {0,1,2},
+                {0,1,2},
+        };
+
+        int[][] ys = {
+                {0,0,0},
+                {1,1,1},
+                {2,2,2},
+                {0,1,2},
+                {0,1,2},
+                {0,1,2},
+                {0,1,2},
+                {2,1,0},
+        };
 
         private final int param;
+        private final int index;
 
-        ERow(int param) {
+        ERow(int param, int index) {
             this.param = param;
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
         }
 
         public int getParam() {
             return param;
         }
+
+        public int[] getXs(){ return xs[getIndex()]; }
+        public int[] getYs(){ return ys[getIndex()]; }
     }
 
     private int getRow(ERow row){
         int sum = 0;
 
-        switch (row){
-            case H1:
-            case H2:
-            case H3:
-                for (int i = 0; i < size; i++) {
-                    sum += U[i][row.getParam()];
-                }
-                break;
-            case V1:
-            case V2:
-            case V3:
-                for (int i = 0; i < size; i++) {
-                    sum += U[row.getParam()][i];
-                }
-                break;
-            case X1:
-                for (int i = 0; i < size; i++) {
-                    //magic function 3+-1=2+-1=1+-1=0 or -1+1=0+1=1+1=2
-                    sum += U[2-i][i];
-                }
-                break;
-            case X2:
-                for (int i = 0; i < size; i++) {
-                    //magic function 3+-1=2+-1=1+-1=0 or -1+1=0+1=1+1=2
-                    sum += U[i][i];
-                }
+        for (int i = 0; i < size; i++) {
+            sum += U[row.getXs()[i]][row.getYs()[i]];
+        }
+
+        return sum;
+    }
+
+    private boolean getFreeCell(ERow row){
+        int i =0;
+        for (i = 0; i < size; i++) {
+            if(U[row.getXs()[i]][row.getYs()[i]] == 0)
                 break;
         }
-        return sum;
+        if(i<size){
+            x = row.getXs()[i];
+            y = row.getYs()[i];
+            System.out.println("free " + x + ":" + y);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private boolean isEmpty(int x, int y){
@@ -70,6 +95,8 @@ public class NativeAI extends AI {
         for(ERow row : ERow.values()){
             if(getRow(row) == -2){
                 //we may win
+                System.out.println("we may win!");
+                return getFreeCell(row);
             }
         }
         return false;
@@ -78,7 +105,9 @@ public class NativeAI extends AI {
     private boolean block(){
         for(ERow row : ERow.values()){
             if(getRow(row) == 2){
-                //we may win
+                //we need block
+                System.out.println("we need block");
+                return getFreeCell(row);
             }
         }
         return false;
