@@ -1,5 +1,6 @@
 package com.tictactoe.ui.gui;
 
+import com.tictactoe.Game;
 import com.tictactoe.model.History;
 import com.tictactoe.model.Player;
 import com.tictactoe.view.IGameInput;
@@ -21,6 +22,9 @@ public class GameForm extends JFrame implements IGameView{
     private JButton b7;
     private JButton b8;
     private JButton b9;
+
+    private JButton[] buttons;
+
     private JList listMessage;
     private DefaultListModel<String> listMessageModel = new DefaultListModel<String>();
 
@@ -29,9 +33,13 @@ public class GameForm extends JFrame implements IGameView{
     private boolean doInput = false;
     private int x = 0;
     private int y = 0;
+    private Player currentPlayer;
 
     public GameForm() throws HeadlessException {
         super("TicTacToe");
+
+        buttons = new JButton[Game.MAX_TURNS];
+
         setContentPane(pTicTacToe);
         pack();
 
@@ -41,70 +49,40 @@ public class GameForm extends JFrame implements IGameView{
         listMessage.setVisibleRowCount(0);
         listMessage.setModel(listMessageModel);
 
-        b1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(1);
-            }
-        });
+        buttons[0] = b1;
+        buttons[1] = b2;
+        buttons[2] = b3;
+        buttons[3] = b4;
+        buttons[4] = b5;
+        buttons[5] = b6;
+        buttons[6] = b7;
+        buttons[7] = b8;
+        buttons[8] = b9;
 
-        b2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b2.getName()));
-            }
-        });
-
-        b3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b3.getName()));
-            }
-        });
-
-        b4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b4.getName()));
-            }
-        });
-
-        b5.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b5.getName()));
-            }
-        });
-
-        b6.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b6.getName()));
-            }
-        });
-
-        b7.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b7.getName()));
-            }
-        });
-
-        b8.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b8.getName()));
-            }
-        });
-
-        b9.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonListener(getCell(b9.getName().toString()));
-            }
-        });
+        for (int i = 0; i < Game.MAX_TURNS; i++) {
+            addButtonListener(buttons[i],i+1);
+        }
 
         setVisible(true);
+    }
+
+    class ButtonListener implements ActionListener{
+        protected final JButton button;
+        protected final int cell;
+
+        ButtonListener(JButton button, int cell) {
+            this.button = button;
+            this.cell = cell;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buttonListener(cell);
+        }
+    }
+
+    private void addButtonListener(final JButton button, final int cell){
+        button.addActionListener(new ButtonListener(button,cell));
     }
 
     public void buttonListener(int cell){
@@ -122,24 +100,25 @@ public class GameForm extends JFrame implements IGameView{
         doInput = true;
     }
 
-    private int getCell(String s){
-        return Integer.parseInt(s);
-    }
-
     @Override
     public void beforeTurn(Player player) {
+        currentPlayer = player;
         listMessageModel.add(0,"Ваш ход " + player.getName());
         waitInput();    //sleep main thread
     }
 
     @Override
     public void onTurn(Player player, int x, int y) {
-
+        onMessage(player.getName() + ": ячейка " + x + "," + y);
     }
 
     @Override
     public void afterTurn() {
-
+        //disable button
+        int buttonIndex = (x-1) + (y-1)*3;
+        String name = "" +currentPlayer.getSign();
+        buttons[buttonIndex].setText(name);
+        buttons[buttonIndex].setEnabled(false);
     }
 
     @Override
@@ -149,22 +128,27 @@ public class GameForm extends JFrame implements IGameView{
 
     @Override
     public void showHistory(History history) {
-
+        //really do nothing, because i dont now what we do;
     }
 
     @Override
     public void onWin(Player winner) {
-
+        JOptionPane.showMessageDialog(this,winner + " выиграл");
+        //System.exit(0);
     }
 
     @Override
     public void onDraw() {
-
+        JOptionPane.showMessageDialog(this,"НИЧЬЯ");
+        //System.exit(0);
     }
 
     @Override
     public void onEnd() {
-
+        onMessage("Игра закончена");
+        for (int i = 0; i < Game.MAX_TURNS; i++) {
+            buttons[i].setEnabled(false);
+        }
     }
 
     @Override
@@ -191,6 +175,10 @@ public class GameForm extends JFrame implements IGameView{
         }
     }
 
+    private String inputPlayerName(Player player){
+        return JOptionPane.showInputDialog(this, "Введите имя для игрока " + player.getSign());
+    }
+
     class GameFormInput implements IGameInput{
         @Override
         public int getX() {
@@ -206,7 +194,8 @@ public class GameForm extends JFrame implements IGameView{
 
         @Override
         public String getPlayerName(Player player) {
-            return "name";
+
+            return inputPlayerName(player);
         }
     }
 }
