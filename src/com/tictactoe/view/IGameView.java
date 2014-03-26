@@ -6,17 +6,13 @@ import com.tictactoe.model.Player;
 public interface IGameView {
     /**
      * Объявляем информацию о ходе игрока
-     * @param player
      */
-    void beforeTurn(Player player);
+    void beforeTurn();
 
     /**
      * Вызывается поле получения данных о ходе
-     * @param player
-     * @param x
-     * @param y
      */
-    void onTurn(Player player, int x, int y);  //мы только что сделали ход, необходимо обновить view
+    void onTurn();  //мы только что сделали ход, необходимо обновить view
 
 
     /**

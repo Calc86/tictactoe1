@@ -26,13 +26,13 @@ public class GameButtonView implements IGameView {
     }
 
     @Override
-    public void beforeTurn(Player player) {
-        gameForm.beforeTurn(player);
+    public void beforeTurn() {
+        gameForm.beforeTurn();
     }
 
     @Override
-    public void onTurn(Player player, int x, int y) {
-        gameForm.onTurn(player,x,y);
+    public void onTurn() {
+        gameForm.onTurn();
     }
 
     @Override

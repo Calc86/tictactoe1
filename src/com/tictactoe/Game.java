@@ -12,12 +12,13 @@ public class Game {
     public static final int PLAYERS_COUNT = 2;
     public static final int MAX_TURNS = 9;
 
-    private Player winner;
+    private Player winner;  // используется для проверки на выигрышь
+
     private GameModel model;
     private int turn = 0;
+    private Player currentPlayer;
 
     private IGameView view;
-    //private IGameInput input;
     private IGameInput[] input = new IGameInput[PLAYERS_COUNT];
 
     private char playerSign[] = {'X','O'};
@@ -52,8 +53,7 @@ public class Game {
             Player player = new Player(playerSign[i]);
             player.setInput(input[i]);
             model.setPlayer(i,player);
-            //ms.setMessage("Введите имя игрока " + player.getSign() + ": ").print();
-            player.setName(player.getInput().getPlayerName(player));    //оч страшная конструкция
+            player.inputPlayerName();
         }
 
     }
@@ -66,7 +66,8 @@ public class Game {
         initPlayers();
         start();
         while(!isEnd()){
-            getTurn(model.getPlayers()[turn % PLAYERS_COUNT]);
+            currentPlayer = model.getPlayers()[turn % PLAYERS_COUNT];
+            getTurn();
             view.afterTurn();
         }
         showHistory();
@@ -81,41 +82,48 @@ public class Game {
         return true;
     }
 
-    private int getCellX(IGameInput input){
-        int i = input.getX();
+    private int getCellX(){
+        Player player = getCurrentPlayer();
+
+        int i = player.inputX();
         if(!validateCoordinate(i))
-            return getCellX(input);
+            return getCellX();
         else
             return i;
     }
 
-    private int getCellY(IGameInput input){
-        int i = input.getY();
+    private int getCellY(){
+        Player player = getCurrentPlayer();
+
+        int i = player.inputY();
         if(!validateCoordinate(i))
-            return getCellY(input);
+            return getCellY();
         else
             return i;
     }
 
-    private void getTurn(Player player){
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 
-        view.beforeTurn(player);
-        int x = getCellX(player.getInput());
-        int y = getCellY(player.getInput());
-        view.onTurn(player, x, y);
+    private void getTurn(){
+        view.beforeTurn();
+        int x = getCellX();
+        int y = getCellY();
+        view.onTurn();
 
         x = x-1;
         y = y-1;
 
         if(model.getField().isCellSet(x, y)){
             view.onError("Ячейка уже занята, попроубей еще раз");
-            getTurn(player);
+            getTurn();
         }else{
-            model.getField().setCell(x, y, player.getSign());
+            model.getField().setCell(x, y, getCurrentPlayer().getSign());
             //insert into history
             model.getHistory().push(model.getField().getField());
             if(isWin())
-                winner = player;
+                winner = getCurrentPlayer();
             turn++;
         }
     }

@@ -31,13 +31,17 @@ public class GameForm extends JFrame implements IGameView{
     private final IGameInput input = new GameFormInput();
 
     private boolean doInput = false;
-    private int x = 0;
-    private int y = 0;
-    private Player currentPlayer;
+
+    //буферный xy для межпроцесья
+    private int _x = 0;
+    private int _y = 0;
+    //private Player currentPlayer;
+    private Game game;
 
     public GameForm() throws HeadlessException {
         super("TicTacToe");
 
+        game = Game.getInstance();
         buttons = new JButton[Game.MAX_TURNS];
 
         setContentPane(pTicTacToe);
@@ -87,36 +91,34 @@ public class GameForm extends JFrame implements IGameView{
 
     public void buttonListener(int cell){
         switch (cell){
-            case 1: x = 1; y = 1; break;
-            case 2: x = 2; y = 1; break;
-            case 3: x = 3; y = 1; break;
-            case 4: x = 1; y = 2; break;
-            case 5: x = 2; y = 2; break;
-            case 6: x = 3; y = 2; break;
-            case 7: x = 1; y = 3; break;
-            case 8: x = 2; y = 3; break;
-            case 9: x = 3; y = 3; break;
+            case 1: _x = 1; _y = 1; break;
+            case 2: _x = 2; _y = 1; break;
+            case 3: _x = 3; _y = 1; break;
+            case 4: _x = 1; _y = 2; break;
+            case 5: _x = 2; _y = 2; break;
+            case 6: _x = 3; _y = 2; break;
+            case 7: _x = 1; _y = 3; break;
+            case 8: _x = 2; _y = 3; break;
+            case 9: _x = 3; _y = 3; break;
         }
         doInput = true;
     }
 
     @Override
-    public void beforeTurn(Player player) {
-        currentPlayer = player;
-        listMessageModel.add(0,"Ваш ход " + player.getName());
-        waitInput();    //sleep main thread
+    public void beforeTurn() {
+        listMessageModel.add(0,"Ход " + game.getCurrentPlayer().getName());
     }
 
     @Override
-    public void onTurn(Player player, int x, int y) {
-        onMessage(player.getName() + ": ячейка " + x + "," + y);
+    public void onTurn() {
+        onMessage(game.getCurrentPlayer().getName() + ": ячейка " + game.getCurrentPlayer().getX() + "," + game.getCurrentPlayer().getY());
     }
 
     @Override
     public void afterTurn() {
         //disable button
-        int buttonIndex = (x-1) + (y-1)*3;
-        String name = "" +currentPlayer.getSign();
+        int buttonIndex = (game.getCurrentPlayer().getX()-1) + (game.getCurrentPlayer().getY()-1) * 3;
+        String name = "" + game.getCurrentPlayer().getSign();
         buttons[buttonIndex].setText(name);
         buttons[buttonIndex].setEnabled(false);
     }
@@ -175,27 +177,27 @@ public class GameForm extends JFrame implements IGameView{
         }
     }
 
-    private String inputPlayerName(Player player){
-        return JOptionPane.showInputDialog(this, "Введите имя для игрока " + player.getSign());
+    private String inputPlayerName(){
+        return JOptionPane.showInputDialog(this, "Введите имя для игрока " + game.getCurrentPlayer().getSign());
     }
 
     class GameFormInput implements IGameInput{
         @Override
         public int getX() {
             doInput = false;
-            return x;
+            waitInput();    //sleep main thread
+            return _x;
         }
 
         @Override
         public int getY() {
             doInput = false;    //do next wait
-            return y;
+            return _y;
         }
 
         @Override
         public String getPlayerName(Player player) {
-
-            return inputPlayerName(player);
+            return inputPlayerName();
         }
     }
 }

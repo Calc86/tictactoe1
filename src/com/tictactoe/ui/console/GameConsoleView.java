@@ -53,13 +53,16 @@ public class GameConsoleView implements IGameView {
     }
 
     @Override
-    public void beforeTurn(Player player) {
+    public void beforeTurn() {
+        Player player = game.getCurrentPlayer();
         message("Ход игрока " + player.getName() + "(" + player.getSign() + ")");
     }
 
     @Override
-    public void onTurn(Player player, int x, int y) {
-        message("Вы ввели: " + x + " " + y);
+    public void onTurn() {
+        Player player = game.getCurrentPlayer();
+        //, int x, int y;
+        message("Вы ввели: " + player.getX() + " " + player.getY());
     }
 
     @Override
