@@ -34,7 +34,8 @@ public class GameConsoleView implements IGameView {
     private void setEncoding(){
         String encoding = "cp1251";
 
-        if(Environment.isWin()) encoding = "Cp866";
+        //if(Environment.isWin()) encoding = "Cp866";
+        if(Environment.isWin()) encoding = "utf8";
         else if (Environment.isMac()) encoding = "utf8";
         else if (Environment.isUnix()) encoding = "utf8";
 
@@ -158,7 +159,7 @@ public class GameConsoleView implements IGameView {
 
         @Override
         public int getX() {
-            return getInt("Введите координату клетки по оси Х: ");
+            return getInt("Введите координату клетки по оси X: ");
         }
 
         @Override
