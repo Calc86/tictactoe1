@@ -11,7 +11,7 @@ public class Main {
 
         game.setView(buttonView);
         //game.setInput(view.getInput());
-        game.setInput(buttonView.getInput());
+        game.setInput(buttonView.getInput(),buttonView.getInput());
 
         game.play();
     }

@@ -17,7 +17,8 @@ public class Game {
     private int turn = 0;
 
     private IGameView view;
-    private IGameInput input;
+    //private IGameInput input;
+    private IGameInput[] input = new IGameInput[PLAYERS_COUNT];
 
     private char playerSign[] = {'X','O'};
 
@@ -33,8 +34,9 @@ public class Game {
         this.view = view;
     }
 
-    public void setInput(IGameInput input) {
-        this.input = input;
+    public void setInput(IGameInput input1, IGameInput input2) {
+        this.input[0] = input1;
+        this.input[1] = input2;
     }
 
     private boolean isEnd() {
@@ -48,9 +50,10 @@ public class Game {
     private void initPlayers(){
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             Player player = new Player(playerSign[i]);
+            player.setInput(input[i]);
             model.setPlayer(i,player);
             //ms.setMessage("Введите имя игрока " + player.getSign() + ": ").print();
-            player.setName(input.getPlayerName(player));
+            player.setName(player.getInput().getPlayerName(player));    //оч страшная конструкция
         }
 
     }
@@ -78,18 +81,18 @@ public class Game {
         return true;
     }
 
-    private int getCellX(){
+    private int getCellX(IGameInput input){
         int i = input.getX();
         if(!validateCoordinate(i))
-            return getCellX();
+            return getCellX(input);
         else
             return i;
     }
 
-    private int getCellY(){
+    private int getCellY(IGameInput input){
         int i = input.getY();
         if(!validateCoordinate(i))
-            return getCellX();
+            return getCellY(input);
         else
             return i;
     }
@@ -97,8 +100,8 @@ public class Game {
     private void getTurn(Player player){
 
         view.beforeTurn(player);
-        int x = getCellX();
-        int y = getCellY();
+        int x = getCellX(player.getInput());
+        int y = getCellY(player.getInput());
         view.onTurn(player, x, y);
 
         x = x-1;
