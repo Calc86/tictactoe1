@@ -51,6 +51,7 @@ public class Game {
     private void initPlayers(){
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             Player player = new Player(playerSign[i]);
+            currentPlayer = player;
             player.setInput(input[i]);
             model.setPlayer(i,player);
             player.inputPlayerName();
